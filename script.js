@@ -9,41 +9,74 @@ function initializeDice(){
         diceArr[i].score = 0;
 	}
 }
+
 function calculateScore(values) {
     var score = 0;
+    var countMap = {};
 
     for (var i = 0; i < values.length; i++) {
-        switch (values[i]) {
-            case 1:
-                score += 100;
-                break;
-            case 5:
-                score += 50;
-                break;
-            default:
-                break;
+        var value = values[i];
+        score += getIndividualScore(value);
+
+        if (countMap[value]) {
+            countMap[value]++;
+        } else {
+            countMap[value] = 1;
+        }
+    }
+
+    for (var key in countMap) {
+        if (countMap[key] >= 3) {
+            if (key === '1') {
+                score += 1000; // Three 1s give 1000 points
+                score -= 300; // Deduct the score for individual 1s (100 each)
+            } else if (key === '5') {
+                score += 500;
+                score-= 150;
+            }
+            else {
+                score += key * 100; // Other values for three of a kind give 100 times the value
+                score -= (key * 100) * 2; // Deduct the score for individual values (100 each)
+            }
         }
     }
 
     return score;
 }
 
+
+
+function getIndividualScore(value) {
+    switch (value) {
+        case 1:
+            return 100;
+        case 5:
+            return 50;
+        default:
+            return 0;
+    }
+}
+
+
 /*Rolling dice values*/
 function rollDice(){
-    var totalScore = 0;
+    var diceValues = [];
 
-    for(var i=0; i < 6; i++){
+    for(var i = 0; i < 6; i++){
         if(diceArr[i].clicked === 0){
             diceArr[i].value = Math.floor((Math.random() * 6) + 1);
-            diceArr[i].score = calculateScore([diceArr[i].value]);
-            totalScore += diceArr[i].score;
         }
+        diceValues.push(diceArr[i].value);
     }
 
-    document.querySelector(".row.score").innerText = totalScore;
+    var totalScore = calculateScore(diceValues);
+
+    // Displays dice scores on page
+    console.log(totalScore);
 
     updateDiceImg();
 }
+
 
 /*Updating images of dice given values of rollDice*/
 function updateDiceImg(){
@@ -54,15 +87,29 @@ function updateDiceImg(){
 	}
 }
 
-function diceClick(img){
-	var i = img.getAttribute("data-number");
+function diceClick(img) {
+    var i = img.getAttribute("data-number");
+    var clickedDice = diceArr[i];
 
-	img.classList.toggle("transparent");
-	if(diceArr[i].clicked === 0){
-		diceArr[i].clicked = 1;
-	}
-	else{
-		diceArr[i].clicked = 0;
-	}
+    img.classList.toggle("transparent");
 
+    if (clickedDice.clicked === 0) {
+        clickedDice.clicked = 1;
+        document.querySelector(".row.tempScore").innerText = calculateScore(getClickedDiceValues());
+    } else {
+        clickedDice.clicked = 0;
+        document.querySelector(".row.tempScore").innerText = calculateScore(getClickedDiceValues());
+    }
+}
+
+function getClickedDiceValues() {
+    var clickedDiceValues = [];
+
+    for (var i = 0; i < diceArr.length; i++) {
+        if (diceArr[i].clicked === 1) {
+            clickedDiceValues.push(diceArr[i].value);
+        }
+    }
+
+    return clickedDiceValues;
 }

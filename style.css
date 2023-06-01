@@ -24,7 +24,7 @@ body{
 	max-width: 520px;
 	margin:0 auto;
 }
-.score{
+.score, .tempScore{
 	background-color: rgba(52,52,52,0.3);
 	color: #fff;
 	height: 60px;
