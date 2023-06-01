@@ -167,3 +167,26 @@ function endGame() {
 
     console.log('end')
 }
+
+// Move the score from Total score to TotalScore element and toggle its display
+function moveScore() {
+    var totalScoreElement = document.querySelector(".totalScore"); // Get the TotalScore element
+    var scoreElement = document.querySelector(".score"); // Get the Total score element
+
+    var totalScore = parseInt(totalScoreElement.innerText); // Get the current TotalScore
+    var score = parseInt(scoreElement.innerText); // Get the current Total score
+
+    totalScore += score; // Add the score to the TotalScore
+
+    totalScoreElement.innerText = totalScore; // Update the TotalScore element
+
+    scoreElement.innerText = "0"; // Reset the Total score element
+
+    totalScoreElement.style.display = "block"; // Set the display to block
+}
+
+
+function bankScore() {
+    moveScore(); // Move the score to TotalScore
+
+}

@@ -36,10 +36,14 @@
     <!-- Button row -->
     <div class="row">
         <button class="button roll column" onclick="rollDice()">Roll Dice</button>
-        <button class="button bank column">Bank Score</button>
+        <button class="button bank column" onclick="bankScore()">Bank Score</button>
     </div>
     <!-- End game -->
     <div class="row gameOver" style="display: none;">Game Over</div>
+    <div class="row" style="display: none">
+        <span>Total Score: </span>
+        <span class="totalScore">0</span>
+    </div>
 
 </body>
 
