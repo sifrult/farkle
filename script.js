@@ -1,4 +1,6 @@
+// Array to store the dice objects
 var diceArr = [];
+var clickedDiceValues = [];
 
 // Initialize dice objects with their initial values
 function initializeDice() {
@@ -11,7 +13,7 @@ function initializeDice() {
     }
 }
 
-// Calculates total score of all selected dice
+// Calculates the total score of all selected dice
 function calculateScore(values) {
     var score = 0;
     var countMap = {}; // A map to keep track of the counts for each value
@@ -52,6 +54,7 @@ function calculateScore(values) {
     return score;
 }
 
+
 // Calculates score for die value of 1 and 5
 function getIndividualScore(value) {
     switch (value) {
@@ -66,44 +69,52 @@ function getIndividualScore(value) {
 
 // Rolls the dice and updates their values
 function rollDice() {
-    var diceValues = [];
+    diceValues = []; // Clear the diceValues array
 
     for (var i = 0; i < 6; i++) {
-        if (diceArr[i].clicked === 0) {
-            diceArr[i].value = Math.floor((Math.random() * 6) + 1);
-        }
-        diceValues.push(diceArr[i].value);
+      if (diceArr[i].clicked === 0 && !diceArr[i].isTransparent) {
+        diceArr[i].value = Math.floor((Math.random() * 6) + 1);
+        diceValues.push(diceArr[i].value); // Add non-transparent values to diceValues
+      }
     }
 
     updateDiceImg();
-}
+
+    var availableScore = calculateScore(diceValues);
+    if (availableScore === 0) {
+      endGame();
+      return;
+    }
+  }
 
 // Updates the images of the dice based on their values
 function updateDiceImg() {
     for (var i = 0; i < 6; i++) {
-        var diceImage = "assets/" + diceArr[i].value + ".png";
-        document.getElementById(diceArr[i].id).setAttribute("src", diceImage);
+        var diceImage = "assets/" + diceArr[i].value + ".png"; // Get the image URL based on the dice value
+        document.getElementById(diceArr[i].id).setAttribute("src", diceImage); // Update the image source
     }
 }
 
 // Handles click events on dice images
 function diceClick(img) {
-    var i = img.getAttribute("data-number");
-    var clickedDice = diceArr[i];
+    var i = img.getAttribute("data-number"); // Get the index of the clicked dice
+    var clickedDice = diceArr[i]; // Get the clicked dice object
 
-    img.classList.toggle("transparent"); // Toggles the transparent class to highlight or unhighlight the clicked dice
+    img.classList.toggle("transparent"); // Toggle the transparency of the clicked dice image
 
     if (clickedDice.clicked === 0) {
         clickedDice.clicked = 1; // Mark the dice as clicked
+        clickedDice.isTransparent = img.classList.contains("transparent"); // Set the isTransparent property
     } else {
         clickedDice.clicked = 0; // Mark the dice as unclicked
+        clickedDice.isTransparent = false; // Reset the isTransparent property
     }
 
     // Update the temporary score display
     document.querySelector(".tempScore").innerText = calculateScore(getClickedDiceValues());
 }
 
-// Retrieves the values of clicked dice
+// Get the values of the clicked dice
 function getClickedDiceValues() {
     var clickedDiceValues = [];
 
@@ -116,9 +127,21 @@ function getClickedDiceValues() {
     return clickedDiceValues;
 }
 
+// Reset the clicked state of the dice
+function resetClickedDice() {
+    for (var i = 0; i < diceArr.length; i++) {
+        if (diceArr[i].clicked === 1) {
+            diceArr[i].clicked = 0; // Reset the clicked state only if it was clicked
+            var diceImage = "assets/" + diceArr[i].value + ".png"; // Get the image URL based on the dice value
+            document.getElementById(diceArr[i].id).setAttribute("src", diceImage); // Update the image source
+        }
+    }
+}
+
+// Keep the score and reset the temporary score and clicked state of the dice
 function keepScore() {
-    var tempScoreElement = document.querySelector(".tempScore");
-    var scoreElement = document.querySelector(".score");
+    var tempScoreElement = document.querySelector(".tempScore"); // Get the temporary score element
+    var scoreElement = document.querySelector(".score"); // Get the score element
 
     var tempScore = parseInt(tempScoreElement.innerText); // Get the current temporary score
     var score = parseInt(scoreElement.innerText); // Get the current score
@@ -129,4 +152,18 @@ function keepScore() {
 
     // Reset the temporary score
     tempScoreElement.innerText = "0";
-  }
+
+    // Reset the clicked state of the dice
+    resetClickedDice();
+}
+
+// Displays a message and disables the "Roll Dice" button
+function endGame() {
+    var gameOverElement = document.querySelector(".gameOver");
+    gameOverElement.style.display = "block"; // Display the "Game Over" message
+
+    var rollDiceButton = document.querySelector(".roll");
+    rollDiceButton.disabled = true; // Disable the roll dice button
+
+    console.log('end')
+}

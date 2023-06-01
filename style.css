@@ -7,9 +7,12 @@ body{
 	font-family: arial;
 }
 .row{
-	margin:auto;
+	margin: auto;
 	width: 800px;
 	max-width: 100%;
+    min-height: 60px;
+    border: 1px solid black;
+    text-align: center;
 }
 .header{
 	height: 100px;
@@ -62,4 +65,11 @@ body{
 .transparent{
 	/*For dice that are selected*/
 	opacity: 0.75;
+}
+
+
+.flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
